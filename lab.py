@@ -150,85 +150,43 @@ def imprimeSaida(caminhoFinal):
 	print ("Caminho do algoritmo:")
 	print (caminhoFinal)
 
-
-"""
-## Passo a  passo dos algoritmos ##
-def passoApasso(labirintoPAP, caminhoPAP):
-	linhas = len(labirintoPAP)
-	colunas = len(labirintoPAP[0])-1
-
-	caminhoPAP = converterSaida(caminhoPAP)
-
-	os.system('cls' if os.name == 'nt' else 'clear')
-	tamanho = len(caminhoPAP)
-
-	for k in range (0, tamanho):
-		for i in range(0, linhas):
-			ln = ""
-			for j in range (0, colunas):
-				if i == caminhoPAP[k][0] and j == caminhoPAP[k][1]:
-					ln += "0"
-				else:
-					ln += labirintoPAP[i][j]
-			print (ln)
-		sleep(0.5)
-		os.system('cls' if os.name == 'nt' else 'clear')
-"""
-
-def passoApasso(labirinto, caminho):
+#Função para visualização do labirinto, em pygame
+def passoApasso(labirinto, caminho):	
 	
-	#montando a visualização em pygame
 	#squareX/squareY = tamanho do quadrado padrão em pixels
 	squareX = 50
 	squareY = 50
+	#mapX mapY = número de "casas" na horizontal e na vertical, respectivamente
 	mapX = (int(len(labirinto[0]))-1)
 	mapY = (len(labirinto))
+	#velocidade, na verdade, é o delay (em ms) entre as atualizações da tela
+	velocidade = 150
+	#quantidade de tempo para observação do caminho adotado pelo algoritmo
+	pausaFinal = 5
 
+	#contador para verificação da posição do algoritmo no grafo
 	passo = 0
 	
+	#encontrando a posição inicial do algoritmo no grafo
 	for item in range(mapX):
 			for char in range(mapY):
 				if(labirinto[char][item] == '#'):
 					posX = item*squareX
 					posY = char*squareY
 
-	
-
-
+	# definindo a tela: mapX*squareX -> (quantos "quadradinhos" X tamanho_dos_quadradinhos)
 	win = pygame.display.set_mode((mapX*squareX,mapY*squareY))
-	pygame.display.set_caption("Caminho")
+	pygame.display.set_caption("Algoritmos de busca")
 
 	run = True
+
 	while run:
-		pygame.time.delay(150) #tempo entre os frames
+		#tempo de espera entre os refreshs da tela
+		pygame.time.delay(velocidade) 
 		for event in pygame.event.get():
 			if event.type == pygame.QUIT:
 				run = False
-		'''
-		bloco para navegação manual do tabuleiro
-		keys = pygame.key.get_pressed()
-		if keys[pygame.K_LEFT]:
-			if(posX <=0):
-				posX = posX
-			else:
-				posX = posX - squareX
-		if keys[pygame.K_RIGHT]:
-			if(posX >= (mapX*squareX)-squareX):
-				posX = posX
-			else:
-				posX = posX + squareX
-		if keys[pygame.K_UP]:
-			if(posY<=0):
-				posY = posY
-			else:
-				posY = posY - squareY 
-		if keys[pygame.K_DOWN]:
-			if(posY>=(mapY*squareY)-squareY):
-				posY = posY
-			else:
-				posY = posY + squareY
 
-		'''
 		#pinta todo o mapa de cinza claro
 		win.fill((50,50,50))
 
@@ -283,15 +241,15 @@ def passoApasso(labirinto, caminho):
 			passo = passo + 1
 		else: #se for o último passo, ele pausa por X segundos e fecha o programa
 			passo = passo + 1
-			sleep(2)
+			sleep(pausaFinal)
 			pygame.quit()
 
-		temp = list(labirinto[int(posY/50)])
+		#alterando a posição atual do algoritmo
+		temp = list(labirinto[int(posY/squareY)])		
+		temp[int(posX/squareX)] = '&'
+		labirinto[int(posY/squareY)] = "".join(temp)
 		
-		temp[int(posX/50)] = '&'
-		labirinto[int(posY/50)] = "".join(temp)
-		
-		
+		#printando a posição atual do algoritmo		
 		pygame.draw.rect(win, (100,100,200), (posX,posY,squareX,squareY))
 		pygame.display.update()
 
@@ -459,4 +417,4 @@ if __name__ == "__main__":
 		elif int(mostraPassos) != 2:
 			print("Opção inválida!")
 
-	print("Tempo: %s segundos" % (tempoFinal - tempoInicial))
+print("Tempo: %s segundos" % (tempoFinal - tempoInicial))
